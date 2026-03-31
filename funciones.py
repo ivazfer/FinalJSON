@@ -77,4 +77,60 @@ def consultar_por_musculo(ejercicios):
     if encontrado == False:
         print('No se han encontrado ejercicios para ese músculo principal.')
 
+def ejercicio_libre(ejercicios):
+    material_buscado = input('Introduce un material: ').lower()
+    tipo_buscado = input('Introduce un tipo de ejercicio: ').lower()
+
+    resultados = []
+
+    for ejercicio in ejercicios:
+        tipo = ejercicio['clasificacion']['tipo']['nombre'].lower()
+        equipo = ejercicio['material']['equipo']
+
+        tiene_material = False
+
+        for elemento in equipo:
+            nombre_material = elemento['elemento']['nombre'].lower()
+            if nombre_material == material_buscado:
+                tiene_material = True
+
+        if tipo == tipo_buscado and tiene_material:
+            titulo = ejercicio['nombre']['visible']
+            musculo = ejercicio['musculos']['principal']['nombre']
+            numero_pasos = len(ejercicio['ejecucion']['pasos'])
+
+            tiene_consejos = 'No'
+            if 'consejos' in ejercicio['ejecucion']:
+                tiene_consejos = 'Sí'
+
+            resultados.append({
+                'titulo': titulo,
+                'musculo': musculo,
+                'pasos': numero_pasos,
+                'consejos': tiene_consejos
+            })
+
+    resultados.sort(key=lambda x: x['titulo'])
+
+    print('--- RESULTADOS DEL EJERCICIO LIBRE ---')
+
+    if len(resultados) == 0:
+        print('No se han encontrado ejercicios con esas condiciones.')
+    else:
+        total_pasos = 0
+
+        for ejercicio in resultados:
+            print('Título:', ejercicio['titulo'])
+            print('Músculo principal:', ejercicio['musculo'])
+            print('Número de pasos:', ejercicio['pasos'])
+            print('Tiene consejos:', ejercicio['consejos'])
+            print('----------------------------------------')
+
+            total_pasos = total_pasos + ejercicio['pasos']
+
+        total_ejercicios = len(resultados)
+        media_pasos = total_pasos / total_ejercicios
+
+        print('Total de ejercicios encontrados:', total_ejercicios)
+        print('Media de pasos:', round(media_pasos))
     
